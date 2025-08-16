@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>UE4 PATCH_LIB Converter</title>
+  <style>
+    body {
+      font-family: monospace;
+      background: #0f111a;
+      color: #eee;
+      padding: 20px;
+    }
+    textarea, pre, select {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+    textarea {
+      height: 120px;
+      background: #1e2230;
+      color: #eee;
+      border: 1px solid #444;
+      resize: vertical;
+    }
+    select {
+      background: #1e2230;
+      color: #eee;
+      border: 1px solid #444;
+    }
+    button {
+      margin-top: 12px;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 8px;
+      background: #3b82f6;
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #2563eb;
+    }
+    pre {
+      background: #1e2230;
+      color: #7df9ff;
+      border: 1px solid #444;
+      min-height: 100px;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+  </style>
+</head>
+<body>
+  <h2>UE4 Offset → PATCH_LIB Converter</h2>
+  <p>Paste offsets below (separated by spaces, commas, or newlines). Then choose library and click <b>Convert</b>.</p>
+  
+  <textarea id="inputOffsets" placeholder="Example: sub_7CEF4AC 0xD97D520 D97D514"></textarea>
+
+  <label for="libSelect"><b>Target Library:</b></label>
+  <select id="libSelect">
+    <option value="libUE4.so">libUE4.so</option>
+    <option value="libanogs.so">libanogs.so</option>
+    <option value="libhdmpve.so">libhdmpve.so</option>
+  </select>
+
+  <button onclick="convert()">Convert</button>
+  <pre id="output"></pre>
+
+  <script>
+    function convert() {
+      const raw = document.getElementById("inputOffsets").value;
+      const targetLib = document.getElementById("libSelect").value;
+      const tokens = raw.split(/[\s,]+/).filter(x => x.length > 0);
+      const seen = new Set();
+      let out = "";
+
+      tokens.forEach(t => {
+        t = t.replace(/^sub_/, "").replace(/^0x/, "").toUpperCase();
+        if (!seen.has(t)) {
+          seen.add(t);
+          out += `PATCH_LIB("${targetLib}", "0x${t}", "C0 03 5F D6");\n`;
+        }
+      });
+
+      document.getElementById("output").textContent = out || "// No valid offsets detected.";
+    }
+  </script>
+</body>
+</html>
