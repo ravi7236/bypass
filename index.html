@@ -7,103 +7,189 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #0f172a;
-      color: #f8fafc;
+      background: #0d1117;
+      color: #f0f6fc;
+      margin: 0;
+      padding: 0;
       display: flex;
       justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
+      align-items: flex-start;
+      min-height: 100vh;
     }
     .container {
-      background: #1e293b;
-      padding: 25px;
+      margin-top: 30px;
+      background: #161b22;
+      padding: 20px;
       border-radius: 12px;
-      width: 420px;
-      box-shadow: 0 0 20px rgba(0,255,200,0.3);
+      box-shadow: 0 0 15px rgba(0,255,150,0.3);
+      width: 90%;
+      max-width: 700px;
     }
     h2 {
       text-align: center;
-      color: #38bdf8;
-      margin-bottom: 20px;
+      color: #00ffa6;
     }
     label {
       display: block;
       margin: 10px 0 5px;
-      font-size: 14px;
     }
     input, select, textarea {
       width: 100%;
       padding: 10px;
+      margin-bottom: 15px;
       border-radius: 8px;
       border: none;
       outline: none;
-      margin-bottom: 15px;
       font-size: 14px;
     }
     input, select {
-      background: #334155;
-      color: #f8fafc;
+      background: #21262d;
+      color: #fff;
     }
     textarea {
-      background: #0f172a;
-      color: #38f89c;
-      resize: none;
+      background: #0d1117;
+      color: #00ffa6;
       height: 120px;
-    }
-    .options {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 15px;
+      resize: none;
     }
     button {
-      width: 100%;
-      padding: 12px;
-      background: #38bdf8;
+      background: #00ffa6;
+      color: #0d1117;
+      padding: 10px 20px;
       border: none;
       border-radius: 8px;
-      font-size: 16px;
-      font-weight: bold;
       cursor: pointer;
-      color: #0f172a;
-      margin-top: 10px;
+      font-weight: bold;
     }
     button:hover {
-      background: #0ea5e9;
+      background: #00cc7a;
+    }
+    .result-box {
+      margin-top: 20px;
+      position: relative;
+    }
+    .copy-btn {
+      position: absolute;
+      right: 10px;
+      top: 10px;
+      padding: 5px 12px;
+      font-size: 12px;
+      background: #30363d;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .copy-btn:hover {
+      background: #444c56;
+    }
+    .desc {
+      font-size: 13px;
+      color: #ccc;
+      margin-bottom: 10px;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h2>Hex Patch Converter</h2>
+    <h2>🔧 Hex Converter Tool</h2>
 
-    <label for="lib">Select Library:</label>
+    <label for="lib">Select Library</label>
     <select id="lib">
       <option value="libanogs.so">libanogs.so</option>
       <option value="libUE4.so">libUE4.so</option>
       <option value="libgcloud.so">libgcloud.so</option>
-      <option value="libtersafe.so">libtersafe.so</option>
+      <option value="libTDataMaster.so">libTDataMaster.so</option>
     </select>
 
-    <label for="offset">Enter Offset:</label>
-    <input type="text" id="offset" placeholder="e.g. 0x138BA0">
+    <label for="offset">Enter Offset</label>
+    <input type="text" id="offset" placeholder="e.g., 0x138BA0">
 
-    <label for="hex">Enter Hex Code:</label>
-    <input type="text" id="hex" placeholder="e.g. 00 80 D2 C0 03 5F D6">
+    <label for="hexType">Select Hex Type</label>
+    <select id="hexType" onchange="updateHexDesc()">
+      <option value="">-- Custom Hex --</option>
+      <option value="00 00 A0 E3 1E FF 2F E1">Bypass Function (MOV R0, #0; BX LR)</option>
+      <option value="C0 03 5F D6">Return (RET)</option>
+      <option value="00 80 D2 C0 03 5F D6">MOV X0, #0; RET</option>
+      <option value="1F 20 03 D5">NOP (No Operation)</option>
+    </select>
+    <div class="desc" id="hexDesc">Choose a predefined hex type or enter your own.</div>
 
-    <div class="options">
-      <label><input type="radio" name="format" value="memory" checked> MemoryPatch</label>
-      <label><input type="radio" name="format" value="patchlib"> PatchLib</label>
-    </div>
+    <label for="hex">Enter Hex (if custom)</label>
+    <input type="text" id="hex" placeholder="e.g., C0 03 5F D6">
 
     <button onclick="convert()">Convert</button>
 
-    <label>Result:</label>
-    <textarea id="result" readonly></textarea>
-    <button onclick="copyResult()">Copy</button>
+    <div class="result-box">
+      <label>📌 MemoryPatch Result</label>
+      <textarea id="result1" readonly></textarea>
+      <button class="copy-btn" onclick="copyText('result1')">Copy</button>
+    </div>
+
+    <div class="result-box">
+      <label>📌 PatchLib Result</label>
+      <textarea id="result2" readonly></textarea>
+      <button class="copy-btn" onclick="copyText('result2')">Copy</button>
+    </div>
   </div>
 
   <script>
+    function updateHexDesc() {
+      let hexType = document.getElementById("hexType").value;
+      let desc = document.getElementById("hexDesc");
+      let hexInput = document.getElementById("hex");
+
+      if (hexType === "") {
+        desc.textContent = "Custom Hex Mode: Enter your own hex below.";
+        hexInput.value = "";
+      } else {
+        hexInput.value = hexType;
+        switch (hexType) {
+          case "00 00 A0 E3 1E FF 2F E1":
+            desc.textContent = "Bypass Function → MOV R0, #0; BX LR (ARM32)";
+            break;
+          case "C0 03 5F D6":
+            desc.textContent = "Return → RET (ARM64)";
+            break;
+          case "00 80 D2 C0 03 5F D6":
+            desc.textContent = "Clear Return → MOV X0, #0; RET (ARM64)";
+            break;
+          case "1F 20 03 D5":
+            desc.textContent = "NOP → No Operation (ARM64)";
+            break;
+          default:
+            desc.textContent = "Predefined Hex selected.";
+        }
+      }
+    }
+
+    function convert() {
+      let lib = document.getElementById("lib").value;
+      let offset = document.getElementById("offset").value;
+      let hex = document.getElementById("hex").value;
+
+      if (!lib || !offset || !hex) {
+        alert("⚠ Please fill all fields!");
+        return;
+      }
+
+      let result1 = `MemoryPatch::createWithHex("${lib}", ${offset}, "${hex}").Modify();`;
+      let result2 = `PATCH_LIB("${lib}", ${offset}, "${hex}");`;
+
+      document.getElementById("result1").value = result1;
+      document.getElementById("result2").value = result2;
+    }
+
+    function copyText(id) {
+      let text = document.getElementById(id);
+      text.select();
+      text.setSelectionRange(0, 99999);
+      document.execCommand("copy");
+      alert("✅ Copied to clipboard!");
+    }
+  </script>
+</body>
+</html>  <script>
     function convert() {
       const lib = document.getElementById("lib").value;
       const offset = document.getElementById("offset").value;
