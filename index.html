@@ -2,89 +2,129 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>UE4 PATCH_LIB Converter</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hex Converter Tool</title>
   <style>
     body {
-      font-family: monospace;
-      background: #0f111a;
-      color: #eee;
-      padding: 20px;
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: #f8fafc;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
     }
-    textarea, pre, select {
+    .container {
+      background: #1e293b;
+      padding: 25px;
+      border-radius: 12px;
+      width: 420px;
+      box-shadow: 0 0 20px rgba(0,255,200,0.3);
+    }
+    h2 {
+      text-align: center;
+      color: #38bdf8;
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      margin: 10px 0 5px;
+      font-size: 14px;
+    }
+    input, select, textarea {
       width: 100%;
       padding: 10px;
       border-radius: 8px;
-      margin-top: 10px;
+      border: none;
+      outline: none;
+      margin-bottom: 15px;
       font-size: 14px;
     }
-    textarea {
-      height: 120px;
-      background: #1e2230;
-      color: #eee;
-      border: 1px solid #444;
-      resize: vertical;
+    input, select {
+      background: #334155;
+      color: #f8fafc;
     }
-    select {
-      background: #1e2230;
-      color: #eee;
-      border: 1px solid #444;
+    textarea {
+      background: #0f172a;
+      color: #38f89c;
+      resize: none;
+      height: 120px;
+    }
+    .options {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 15px;
     }
     button {
-      margin-top: 12px;
-      padding: 8px 16px;
+      width: 100%;
+      padding: 12px;
+      background: #38bdf8;
       border: none;
       border-radius: 8px;
-      background: #3b82f6;
-      color: #fff;
+      font-size: 16px;
       font-weight: bold;
       cursor: pointer;
+      color: #0f172a;
+      margin-top: 10px;
     }
     button:hover {
-      background: #2563eb;
-    }
-    pre {
-      background: #1e2230;
-      color: #7df9ff;
-      border: 1px solid #444;
-      min-height: 100px;
-      white-space: pre-wrap;
-      word-break: break-word;
+      background: #0ea5e9;
     }
   </style>
 </head>
 <body>
-  <h2>UE4 Offset → PATCH_LIB Converter</h2>
-  <p>Paste offsets below (separated by spaces, commas, or newlines). Then choose library and click <b>Convert</b>.</p>
-  
-  <textarea id="inputOffsets" placeholder="Example: sub_7CEF4AC 0xD97D520 D97D514"></textarea>
+  <div class="container">
+    <h2>Hex Patch Converter</h2>
 
-  <label for="libSelect"><b>Target Library:</b></label>
-  <select id="libSelect">
-    <option value="libUE4.so">libUE4.so</option>
-    <option value="libanogs.so">libanogs.so</option>
-    <option value="libhdmpve.so">libhdmpve.so</option>
-  </select>
+    <label for="lib">Select Library:</label>
+    <select id="lib">
+      <option value="libanogs.so">libanogs.so</option>
+      <option value="libUE4.so">libUE4.so</option>
+      <option value="libgcloud.so">libgcloud.so</option>
+      <option value="libtersafe.so">libtersafe.so</option>
+    </select>
 
-  <button onclick="convert()">Convert</button>
-  <pre id="output"></pre>
+    <label for="offset">Enter Offset:</label>
+    <input type="text" id="offset" placeholder="e.g. 0x138BA0">
+
+    <label for="hex">Enter Hex Code:</label>
+    <input type="text" id="hex" placeholder="e.g. 00 80 D2 C0 03 5F D6">
+
+    <div class="options">
+      <label><input type="radio" name="format" value="memory" checked> MemoryPatch</label>
+      <label><input type="radio" name="format" value="patchlib"> PatchLib</label>
+    </div>
+
+    <button onclick="convert()">Convert</button>
+
+    <label>Result:</label>
+    <textarea id="result" readonly></textarea>
+    <button onclick="copyResult()">Copy</button>
+  </div>
 
   <script>
     function convert() {
-      const raw = document.getElementById("inputOffsets").value;
-      const targetLib = document.getElementById("libSelect").value;
-      const tokens = raw.split(/[\s,]+/).filter(x => x.length > 0);
-      const seen = new Set();
-      let out = "";
+      const lib = document.getElementById("lib").value;
+      const offset = document.getElementById("offset").value;
+      const hex = document.getElementById("hex").value;
+      const format = document.querySelector('input[name="format"]:checked').value;
+      let result = "";
 
-      tokens.forEach(t => {
-        t = t.replace(/^sub_/, "").replace(/^0x/, "").toUpperCase();
-        if (!seen.has(t)) {
-          seen.add(t);
-          out += `PATCH_LIB("${targetLib}", "0x${t}", "C0 03 5F D6");\n`;
-        }
-      });
+      if (format === "memory") {
+        result = `MemoryPatch::createWithHex("${lib}", ${offset}, "${hex}").Modify();`;
+      } else {
+        result = `PATCH_LIB("${lib}", ${offset}, "${hex}");`;
+      }
 
-      document.getElementById("output").textContent = out || "// No valid offsets detected.";
+      document.getElementById("result").value = result;
+    }
+
+    function copyResult() {
+      const resultBox = document.getElementById("result");
+      resultBox.select();
+      document.execCommand("copy");
+      alert("Copied to clipboard!");
     }
   </script>
 </body>
