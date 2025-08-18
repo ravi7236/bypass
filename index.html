@@ -2,216 +2,128 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hex Converter Tool</title>
+  <title>ManasDev Mods & Hacks</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #0d1117;
-      color: #f0f6fc;
-      margin: 0;
-      padding: 0;
+      background: #0f172a;
+      color: #f8fafc;
       display: flex;
       justify-content: center;
-      align-items: flex-start;
+      align-items: center;
       min-height: 100vh;
+      margin: 0;
     }
     .container {
-      margin-top: 30px;
-      background: #161b22;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 0 15px rgba(0,255,150,0.3);
+      background: #1e293b;
+      padding: 25px;
+      border-radius: 15px;
       width: 90%;
-      max-width: 700px;
+      max-width: 600px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
     }
-    h2 {
+    h1 {
       text-align: center;
-      color: #00ffa6;
+      margin-bottom: 20px;
+      font-size: 22px;
+      color: #38bdf8;
     }
     label {
+      font-weight: bold;
       display: block;
       margin: 10px 0 5px;
     }
-    input, select, textarea {
+    select, input, textarea, button {
       width: 100%;
       padding: 10px;
-      margin-bottom: 15px;
       border-radius: 8px;
       border: none;
-      outline: none;
+      margin-bottom: 15px;
       font-size: 14px;
     }
-    input, select {
-      background: #21262d;
-      color: #fff;
-    }
     textarea {
-      background: #0d1117;
-      color: #00ffa6;
-      height: 120px;
-      resize: none;
+      min-height: 70px;
+      resize: vertical;
     }
     button {
-      background: #00ffa6;
-      color: #0d1117;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 8px;
+      background: #22c55e;
+      color: white;
+      font-size: 16px;
       cursor: pointer;
-      font-weight: bold;
+      transition: 0.2s;
     }
     button:hover {
-      background: #00cc7a;
+      background: #16a34a;
     }
-    .result-box {
-      margin-top: 20px;
-      position: relative;
-    }
-    .copy-btn {
-      position: absolute;
-      right: 10px;
-      top: 10px;
-      padding: 5px 12px;
-      font-size: 12px;
-      background: #30363d;
-      color: #fff;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    .copy-btn:hover {
-      background: #444c56;
-    }
-    .desc {
-      font-size: 13px;
-      color: #ccc;
-      margin-bottom: 10px;
+    pre {
+      background: #0f172a;
+      padding: 15px;
+      border-radius: 10px;
+      overflow-x: auto;
+      font-size: 14px;
+      white-space: pre-wrap;
+      word-wrap: break-word;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h2>🔧 Hex Converter Tool by ManasDev 🔥</h2>
+    <h1>⚡ Offset & Patch Tool By ManasDev</h1>
 
-    <label for="lib">Select Library</label>
-    <select id="lib">
+    <label>Choose Library:</label>
+    <select id="library">
       <option value="libanogs.so">libanogs.so</option>
       <option value="libUE4.so">libUE4.so</option>
-      <option value="libgcloud.so">libgcloud.so</option>
-      <option value="libTDataMaster.so">libTDataMaster.so</option>
+      <option value="libAntsVoice.so">libAntsVoice.so</option>
     </select>
 
-    <label for="offset">Enter Offset</label>
-    <input type="text" id="offset" placeholder="e.g., 0x138BA0">
-
-    <label for="hexType">Select Hex Type</label>
-    <select id="hexType" onchange="updateHexDesc()">
-      <option value="">-- Custom Hex --</option>
-      <option value="00 00 A0 E3 1E FF 2F E1">Bypass Function (MOV R0, #0; BX LR)</option>
-      <option value="C0 03 5F D6">Return (RET)</option>
-      <option value="00 80 D2 C0 03 5F D6">MOV X0, #0; RET</option>
-      <option value="1F 20 03 D5">NOP (No Operation)</option>
+    <label>Choose Prebuilt Hex:</label>
+    <select id="hexSelect">
+      <option value="00 00 80 D2 C0 03 5F D6">MOV X0, #0 ; RET</option>
+      <option value="20 00 80 D2 C0 03 5F D6">MOV X0, #1 ; RET</option>
+      <option value="1F 20 03 D5">NOP</option>
     </select>
-    <div class="desc" id="hexDesc">Choose a predefined hex type or enter your own.</div>
 
-    <label for="hex">Enter Hex (if custom)</label>
-    <input type="text" id="hex" placeholder="e.g., C0 03 5F D6">
+    <label>Offset(s) (comma-separated hex):</label>
+    <input id="offset" placeholder="e.g. 076D21,92838,139330">
 
-    <button onclick="convert()">Convert</button>
+    <label>Hex Patch:</label>
+    <textarea id="hexpatch">00 00 80 D2 C0 03 5F D6</textarea>
 
-    <div class="result-box">
-      <label>📌 MemoryPatch Result</label>
-      <textarea id="result1" readonly></textarea>
-      <button class="copy-btn" onclick="copyText('result1')">Copy</button>
-    </div>
+    <button id="generateBtn">Generate MemoryPatch</button>
 
-    <div class="result-box">
-      <label>📌 PatchLib Result</label>
-      <textarea id="result2" readonly></textarea>
-      <button class="copy-btn" onclick="copyText('result2')">Copy</button>
-    </div>
+    <pre id="output">// Output will appear here...</pre>
   </div>
 
   <script>
-    function updateHexDesc() {
-      let hexType = document.getElementById("hexType").value;
-      let desc = document.getElementById("hexDesc");
-      let hexInput = document.getElementById("hex");
+    // Auto-fill textarea when prebuilt hex is chosen
+    document.getElementById("hexSelect").addEventListener("change", (e) => {
+      document.getElementById("hexpatch").value = e.target.value;
+    });
 
-      if (hexType === "") {
-        desc.textContent = "Custom Hex Mode: Enter your own hex below.";
-        hexInput.value = "";
-      } else {
-        hexInput.value = hexType;
-        switch (hexType) {
-          case "00 00 A0 E3 1E FF 2F E1":
-            desc.textContent = "Bypass Function → MOV R0, #0; BX LR (ARM32)";
-            break;
-          case "C0 03 5F D6":
-            desc.textContent = "Return → RET (ARM64)";
-            break;
-          case "00 80 D2 C0 03 5F D6":
-            desc.textContent = "Clear Return → MOV X0, #0; RET (ARM64)";
-            break;
-          case "1F 20 03 D5":
-            desc.textContent = "NOP → No Operation (ARM64)";
-            break;
-          default:
-            desc.textContent = "Predefined Hex selected.";
-        }
-      }
-    }
+    document.getElementById("generateBtn").addEventListener("click", () => {
+      const lib = document.getElementById("library").value;
+      const offsets = document.getElementById("offset").value.split(",");
+      const hexPatch = document.getElementById("hexpatch").value.trim();
 
-    function convert() {
-      let lib = document.getElementById("lib").value;
-      let offset = document.getElementById("offset").value;
-      let hex = document.getElementById("hex").value;
-
-      if (!lib || !offset || !hex) {
-        alert("⚠ Please fill all fields!");
+      if (!offsets[0]) {
+        document.getElementById("output").innerText = "// Please enter at least one offset!";
         return;
       }
 
-      let result1 = `MemoryPatch::createWithHex("${lib}", ${offset}, "${hex}").Modify();`;
-      let result2 = `PATCH_LIB("${lib}", ${offset}, "${hex}");`;
+      // Generate PatchLib lines
+      let patchLibLines = offsets.map(off =>
+        `PATCH_LIB("${lib}", "0x${off.trim()}", "${hexPatch}");`
+      ).join("\n");
 
-      document.getElementById("result1").value = result1;
-      document.getElementById("result2").value = result2;
-    }
+      // Generate MemoryPatch structure
+      let memPatch = "MemoryPatch patches[] = {\n" + offsets.map(off =>
+        `    MemoryPatch::createWithHex("${lib}", 0x${off.trim()}, "${hexPatch}")`
+      ).join(",\n") + "\n};";
 
-    function copyText(id) {
-      let text = document.getElementById(id);
-      text.select();
-      text.setSelectionRange(0, 99999);
-      document.execCommand("copy");
-      alert("✅ Copied to clipboard!");
-    }
-  </script>
-</body>
-</html>  <script>
-    function convert() {
-      const lib = document.getElementById("lib").value;
-      const offset = document.getElementById("offset").value;
-      const hex = document.getElementById("hex").value;
-      const format = document.querySelector('input[name="format"]:checked').value;
-      let result = "";
-
-      if (format === "memory") {
-        result = `MemoryPatch::createWithHex("${lib}", ${offset}, "${hex}").Modify();`;
-      } else {
-        result = `PATCH_LIB("${lib}", ${offset}, "${hex}");`;
-      }
-
-      document.getElementById("result").value = result;
-    }
-
-    function copyResult() {
-      const resultBox = document.getElementById("result");
-      resultBox.select();
-      document.execCommand("copy");
-      alert("Copied to clipboard!");
-    }
+      document.getElementById("output").innerText =
+        patchLibLines + "\n\n// === MemoryPatch Structure ===\n" + memPatch;
+    });
   </script>
 </body>
 </html>
