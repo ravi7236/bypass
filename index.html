@@ -1,129 +1,781 @@
-<!DOCTYPE html>
+      <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>ManasDev Mods & Hacks</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #0f172a;
-      color: #f8fafc;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      margin: 0;
-    }
-    .container {
-      background: #1e293b;
-      padding: 25px;
-      border-radius: 15px;
-      width: 90%;
-      max-width: 600px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-    }
-    h1 {
-      text-align: center;
-      margin-bottom: 20px;
-      font-size: 22px;
-      color: #38bdf8;
-    }
-    label {
-      font-weight: bold;
-      display: block;
-      margin: 10px 0 5px;
-    }
-    select, input, textarea, button {
-      width: 100%;
-      padding: 10px;
-      border-radius: 8px;
-      border: none;
-      margin-bottom: 15px;
-      font-size: 14px;
-    }
-    textarea {
-      min-height: 70px;
-      resize: vertical;
-    }
-    button {
-      background: #22c55e;
-      color: white;
-      font-size: 16px;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-    button:hover {
-      background: #16a34a;
-    }
-    pre {
-      background: #0f172a;
-      padding: 15px;
-      border-radius: 10px;
-      overflow-x: auto;
-      font-size: 14px;
-      white-space: pre-wrap;
-      word-wrap: break-word;
-    }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>JEEVAN Gaming / OKBank</title>
+<style>
+  :root{
+    --accent:#2bd4c7;
+    --accent-2:#ff6b81;
+    --bg:#0f1720;
+    --panel:#0b1220;
+    --muted:#9aa6b2;
+    --glass: rgba(255,255,255,0.04);
+    --card:#0f1620;
+    --glass-2: rgba(43,212,199,0.06);
+    --success:#37d67a;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:Inter, "Segoe UI", Roboto, Arial;
+    background: linear-gradient(180deg,#071021 0%, #071726 40%, #08121a 100%);
+    color:#e6f2f1;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+  }
+
+  /* Top header */
+  header.topbar{
+    height:64px;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:0 16px;
+    background:linear-gradient(90deg, rgba(43,212,199,0.12), rgba(255,107,129,0.06));
+    border-bottom:1px solid rgba(255,255,255,0.03);
+    position:sticky;
+    top:0;
+    z-index:50;
+  }
+  .logo {
+    display:flex; gap:10px; align-items:center;
+  }
+  .logo .mark{
+    width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent-2));
+    display:flex;align-items:center;justify-content:center;font-weight:700;color:#042026;
+    box-shadow:0 6px 20px rgba(43,212,199,0.12);
+  }
+  .logo h1{font-size:16px;margin:0;color:#dff7f4;letter-spacing:0.4px}
+
+  .top-actions{margin-left:auto;display:flex;gap:8px;align-items:center}
+  .icon-btn{
+    background:var(--glass);border:1px solid rgba(255,255,255,0.03);padding:8px;border-radius:10px;cursor:pointer;color:var(--muted);
+  }
+  .icon-btn:hover{color:#fff;transform:translateY(-2px)}
+
+  /* Layout */
+  .app {
+    display:grid;
+    grid-template-columns: 82px 1fr;
+    gap:16px;
+    width:100%;
+    max-width:1200px;
+    margin:18px auto;
+    padding:0 12px 80px;
+    flex:1;
+  }
+
+  /* Sidebar */
+  nav.sidebar{
+    background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border-radius:12px;
+    padding:12px 8px;
+    height:calc(100vh - 140px);
+    position:sticky;
+    top:86px;
+    overflow:auto;
+  }
+  .nav-item{
+    display:flex;flex-direction:column;align-items:center;padding:10px 6px;border-radius:10px;margin-bottom:8px;color:var(--muted);cursor:pointer;
+  }
+  .nav-item:hover{background:var(--glass);color:#fff;transform:translateX(4px)}
+  .nav-item.active{background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#042026;font-weight:600}
+
+  /* Main area */
+  main{
+    padding:6px 6px;
+  }
+
+  /* Grid blocks */
+  .row{
+    display:grid;
+    grid-template-columns: 1fr 360px;
+    gap:16px;
+    align-items:start;
+  }
+  .panel{
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border-radius:12px;
+    padding:16px;
+    border:1px solid rgba(255,255,255,0.02);
+  }
+  .full{grid-column:1/-1}
+
+  h2{margin:0 0 8px 0;font-size:16px}
+  p.small{color:var(--muted);margin:6px 0 0;font-size:13px}
+
+  /* cards for quick stats */
+  .stats{
+    display:flex;gap:12px;flex-wrap:wrap;
+  }
+  .stat{
+    flex:1;
+    min-width:140px;
+    padding:12px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border:1px solid rgba(255,255,255,0.02);
+  }
+  .stat .num{font-size:20px;font-weight:700}
+  .muted{color:var(--muted)}
+
+  /* forms */
+  .form-row{display:flex;gap:8px}
+  .form-row .col{flex:1}
+
+  input, select, textarea{
+    background:transparent;border:1px solid rgba(255,255,255,0.06);padding:10px;border-radius:8px;color:#e6f2f1;
+    outline:none;
+  }
+  textarea{min-height:80px;resize:vertical}
+  .btn{
+    background:linear-gradient(90deg,var(--accent),var(--accent-2));border:none;padding:10px 12px;border-radius:10px;color:#042026;font-weight:700;cursor:pointer;
+  }
+  .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted)}
+
+  /* tables */
+  table{width:100%;border-collapse:collapse;margin-top:8px}
+  th,td{padding:8px;border-bottom:1px solid rgba(255,255,255,0.03);text-align:left;font-size:13px}
+  th{color:var(--muted);font-weight:600}
+  .small-btn{padding:6px 8px;border-radius:8px;border:none;background:rgba(255,255,255,0.03);color:var(--muted);cursor:pointer}
+  .small-btn.danger{background:rgba(255,50,80,0.12);color:#ffb6c0}
+
+  /* bottom nav (mobile) */
+  .bottom-nav{
+    position:fixed;left:50%;transform:translateX(-50%);bottom:12px;background:linear-gradient(90deg,#021214, #04121a);padding:8px;border-radius:40px;border:1px solid rgba(255,255,255,0.03);display:flex;gap:10px;z-index:60;
+    box-shadow:0 10px 30px rgba(2,8,12,0.6)
+  }
+  .bottom-nav button{background:transparent;border:none;color:var(--muted);padding:8px;border-radius:20px;cursor:pointer}
+  .bottom-nav button.active{color:var(--accent);font-weight:700}
+
+  /* responsive */
+  @media (max-width:900px){
+    .app{grid-template-columns:1fr; padding:12px}
+    nav.sidebar{display:none}
+    .row{grid-template-columns:1fr}
+    .card-grid{grid-template-columns:1fr 1fr}
+    .bottom-nav{left:50%;transform:translateX(-50%);width:auto}
+  }
+  /* little badge */
+  .chat-badge{position:fixed;right:18px;bottom:84px;background:linear-gradient(90deg,var(--accent),var(--accent-2));width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 30px rgba(43,212,199,0.12);cursor:pointer;border:4px solid rgba(255,255,255,0.03)}
+  .badge-dot{background:#ff6b81;color:#fff;font-weight:700;padding:2px 6px;border-radius:10px;font-size:12px;position:absolute;right:-6px;top:-6px}
+  /* nice subtle headings */
+  .section-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+  .muted-pill{background:rgba(255,255,255,0.02);padding:6px 10px;border-radius:12px;color:var(--muted);font-weight:600}
+</style>
 </head>
 <body>
-  <div class="container">
-    <h1>⚡ Offset & Patch Tool By ManasDev</h1>
 
-    <label>Choose Library:</label>
-    <select id="library">
-      <option value="libanogs.so">libanogs.so</option>
-      <option value="libUE4.so">libUE4.so</option>
-      <option value="libAntsVoice.so">libAntsVoice.so</option>
-    </select>
-
-    <label>Choose Prebuilt Hex:</label>
-    <select id="hexSelect">
-      <option value="00 00 80 D2 C0 03 5F D6">MOV X0, #0 ; RET</option>
-      <option value="20 00 80 D2 C0 03 5F D6">MOV X0, #1 ; RET</option>
-      <option value="1F 20 03 D5">NOP</option>
-    </select>
-
-    <label>Offset(s) (comma-separated hex):</label>
-    <input id="offset" placeholder="e.g. 076D21,92838,139330">
-
-    <label>Hex Patch:</label>
-    <textarea id="hexpatch">00 00 80 D2 C0 03 5F D6</textarea>
-
-    <button id="generateBtn">Generate MemoryPatch</button>
-
-    <pre id="output">// Output will appear here...</pre>
+<header class="topbar">
+  <div class="logo">
+    <div class="mark">OK</div>
+    <div>
+      <h1>OKBank • Dashboard</h1>
+      <div style="font-size:12px;color:var(--muted)">Part-time jobs • Earnings manager</div>
+    </div>
   </div>
 
-  <script>
-    // Auto-fill textarea when prebuilt hex is chosen
-    document.getElementById("hexSelect").addEventListener("change", (e) => {
-      document.getElementById("hexpatch").value = e.target.value;
+  <div class="top-actions">
+    <button class="icon-btn" title="Notifications" onclick="alert('No notifications')">🔔</button>
+    <button class="icon-btn" title="Settings" onclick="alert('Open settings')">⚙️</button>
+    <div style="width:8px"></div>
+  </div>
+</header>
+
+<div class="app">
+
+  <!-- Sidebar -->
+  <nav class="sidebar" aria-label="Main navigation">
+    <div class="nav-item active" data-page="home" onclick="showPanel('home')">🏠<span style="font-size:11px;margin-top:6px">Home</span></div>
+    <div class="nav-item" data-page="mine" onclick="showPanel('mine')">👤<span style="font-size:11px;margin-top:6px">Mine</span></div>
+    <div class="nav-item" data-page="commission" onclick="showPanel('commission')">💸<span style="font-size:11px;margin-top:6px">Commission</span></div>
+    <div class="nav-item" data-page="bank" onclick="showPanel('bank')">🏦<span style="font-size:11px;margin-top:6px">Bank</span></div>
+    <div class="nav-item" data-page="users" onclick="showPanel('users')">👥<span style="font-size:11px;margin-top:6px">Users</span></div>
+    <div class="nav-item" data-page="help" onclick="showPanel('help')">❓<span style="font-size:11px;margin-top:6px">Help</span></div>
+  </nav>
+
+  <!-- Main -->
+  <main>
+
+    <!-- HOME -->
+    <section id="home" class="panel full">
+      <div style="display:flex;gap:12px;align-items:center;justify-content:space-between">
+        <div>
+          <h2>Welcome back!</h2>
+          <p class="small">Quick summary of your account and easy actions.</p>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <button class="btn" onclick="showPanel('bank')">Add Bank</button>
+          <button class="btn ghost" onclick="showPanel('mine')">Go to Mine</button>
+        </div>
+      </div>
+
+      <div style="margin-top:14px" class="stats">
+        <div class="stat panel">
+          <div class="muted">Balance</div>
+          <div class="num" id="ui-balance">1000.00</div>
+          <div class="muted small">Available for withdrawal</div>
+        </div>
+        <div class="stat panel">
+          <div class="muted">Salary</div>
+          <div class="num" id="ui-salary">0.00</div>
+          <div class="muted small">Collection / payout</div>
+        </div>
+        <div class="stat panel">
+          <div class="muted">Commission</div>
+          <div class="num" id="ui-commission">0.00</div>
+          <div class="muted small">Referral & levels</div>
+        </div>
+        <div class="stat panel">
+          <div class="muted">Users</div>
+          <div class="num" id="ui-users-count">0</div>
+          <div class="muted small">Active / Disabled</div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 420px;gap:16px;margin-top:16px">
+        <div class="panel">
+          <div class="section-title">
+            <h2>Products & Services</h2>
+            <div class="muted-pill">Tap to open</div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px">
+            <div class="panel" style="display:flex;flex-direction:column;align-items:center;justify-content:center">
+              <div style="font-size:28px">🎯</div>
+              <div style="margin-top:8px;font-weight:700">Activity</div>
+              <div class="muted small">Daily tasks & events</div>
+            </div>
+            <div class="panel" style="display:flex;flex-direction:column;align-items:center;justify-content:center">
+              <div style="font-size:28px">💱</div>
+              <div style="margin-top:8px;font-weight:700">AntBinance</div>
+              <div class="muted small">Exchange tools</div>
+            </div>
+            <div class="panel" style="display:flex;flex-direction:column;align-items:center;justify-content:center">
+              <div style="font-size:28px">🎁</div>
+              <div style="margin-top:8px;font-weight:700">Rewards</div>
+              <div class="muted small">Claim rewards</div>
+            </div>
+            <div class="panel" style="display:flex;flex-direction:column;align-items:center;justify-content:center">
+              <div style="font-size:28px">✉️</div>
+              <div style="margin-top:8px;font-weight:700">Share & Earn</div>
+              <div class="muted small">Referral program</div>
+            </div>
+          </div>
+        </div>
+
+        <aside class="panel">
+          <h2>Quick Actions</h2>
+          <div style="display:flex;flex-direction:column;gap:10px;margin-top:8px">
+            <button class="btn" onclick="showPanel('bank')">Add Withdraw Account</button>
+            <button class="btn ghost" onclick="showPanel('users')">Manage Users</button>
+            <button class="btn" onclick="showPanel('commission')">View Commission</button>
+            <button class="btn ghost" onclick="showPanel('help')">Help & Support</button>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- MINE -->
+    <section id="mine" class="panel" style="display:none">
+      <div style="display:flex;gap:12px;align-items:center;justify-content:space-between">
+        <div>
+          <h2>My Account</h2>
+          <p class="small">Email: <b id="profile-email">user@example.com</b> • User ID: <span id="profile-id">116818</span></p>
+        </div>
+        <div>
+          <button class="btn" onclick="copyReferral()">Copy Referral</button>
+          <button class="btn ghost" onclick="shareReferral()">Share</button>
+        </div>
+      </div>
+
+      <div style="margin-top:12px" class="row">
+        <div class="panel">
+          <h3>Update Profile</h3>
+          <form id="form-profile" onsubmit="updateProfile(event)">
+            <div class="form-row">
+              <div class="col"><input id="p-name" placeholder="Full name" value="Demo User"></div>
+              <div class="col"><input id="p-email" placeholder="Email" value="user@example.com"></div>
+            </div>
+            <div style="margin-top:8px" class="form-row">
+              <div class="col"><input id="p-pass" placeholder="New password (optional)" type="password"></div>
+              <div class="col"><input id="p-phone" placeholder="Phone (optional)"></div>
+            </div>
+            <div style="margin-top:8px;display:flex;gap:8px">
+              <button class="btn">Save</button>
+              <button type="button" class="btn ghost" onclick="resetProfile()">Reset</button>
+            </div>
+            <p id="profile-msg" class="small muted" style="margin-top:8px"></p>
+          </form>
+
+          <hr style="border:none;border-top:1px solid rgba(255,255,255,0.02);margin:12px 0">
+
+          <h3>Balances</h3>
+          <div style="display:flex;gap:12px;margin-top:8px">
+            <div class="stat" style="padding:10px">
+              <div class="muted">Balance</div>
+              <div class="num" id="mine-balance">1000.00</div>
+            </div>
+            <div class="stat" style="padding:10px">
+              <div class="muted">Salary</div>
+              <div class="num" id="mine-salary">0.00</div>
+            </div>
+            <div class="stat" style="padding:10px">
+              <div class="muted">Commission</div>
+              <div class="num" id="mine-commission">0.00</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>Bank & Withdraw</h3>
+          <p class="small">Add withdraw bank accounts and make withdrawals.</p>
+
+          <form id="bank-form" onsubmit="addBank(event)" style="margin-top:10px">
+            <select id="bank-select" required>
+              <option value="">Select Bank</option>
+              <option>Bank of America</option>
+              <option>Chase Bank</option>
+              <option>Wells Fargo</option>
+              <option>CitiBank</option>
+              <option>HSBC</option>
+              <option>Barclays</option>
+              <option>Standard Chartered</option>
+              <option>ICICI Bank</option>
+              <option>HDFC Bank</option>
+              <option>State Bank of India</option>
+              <option>Axis Bank</option>
+              <option>PNC Bank</option>
+              <option>TD Bank</option>
+              <option>Capital One</option>
+              <option>Deutsche Bank</option>
+            </select>
+            <input id="bank-acc" placeholder="Account number" required />
+            <input id="bank-code" placeholder="IFSC / Routing code (optional)" />
+            <div style="display:flex;gap:8px;margin-top:8px">
+              <button class="btn">Save Bank</button>
+              <button type="button" class="btn ghost" onclick="populateSampleBanks()">Load Samples</button>
+            </div>
+          </form>
+
+          <div style="margin-top:12px">
+            <h4>Saved Accounts</h4>
+            <table id="bank-table" aria-live="polite">
+              <thead><tr><th>Bank</th><th>Account</th><th>Code</th><th></th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+
+          <hr style="border:none;border-top:1px solid rgba(255,255,255,0.02);margin:12px 0">
+
+          <h4>Withdraw</h4>
+          <form id="withdraw-form" onsubmit="requestWithdraw(event)">
+            <input id="withdraw-amount" type="number" placeholder="Amount" min="1" required />
+            <select id="withdraw-select" required><option value="">Select saved account</option></select>
+            <div style="display:flex;gap:8px;margin-top:8px">
+              <button class="btn">Request Withdraw</button>
+              <button type="button" class="btn ghost" onclick="clearWithdrawHistory()">Clear History</button>
+            </div>
+          </form>
+
+          <div style="margin-top:12px">
+            <h4>Withdraw History</h4>
+            <table id="withdraw-table">
+              <thead><tr><th>Amount</th><th>Account</th><th>Status</th><th></th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- COMMISSION -->
+    <section id="commission" class="panel" style="display:none">
+      <h2>Commission & Salary</h2>
+      <p class="small">Change rates to simulate collection/payout commission calculation.</p>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px">
+        <div class="panel">
+          <h3>Rates</h3>
+          <div class="form-row">
+            <div class="col"><label class="small muted">Self (%)</label><input id="rate-self" type="number" value="0" /></div>
+            <div class="col"><label class="small muted">LV1 (%)</label><input id="rate-lv1" type="number" value="0" /></div>
+          </div>
+          <div class="form-row" style="margin-top:8px">
+            <div class="col"><label class="small muted">LV2 (%)</label><input id="rate-lv2" type="number" value="0" /></div>
+            <div class="col"><label class="small muted">Salary (%)</label><input id="rate-sal" type="number" value="0" /></div>
+          </div>
+          <div style="margin-top:10px;display:flex;gap:8px"><button class="btn" onclick="recalcCommission()">Recalculate</button><button class="btn ghost" onclick="resetRates()">Reset</button></div>
+        </div>
+
+        <div class="panel">
+          <h3>Preview</h3>
+          <p class="small">Enter sample transactions to preview commissions</p>
+          <div class="form-row" style="margin-top:8px">
+            <div class="col"><input id="tx-self" type="number" placeholder="Self tx amount" /></div>
+            <div class="col"><input id="tx-lv1" type="number" placeholder="LV1 tx amount" /></div>
+          </div>
+          <div class="form-row" style="margin-top:8px">
+            <div class="col"><input id="tx-lv2" type="number" placeholder="LV2 tx amount" /></div>
+            <div class="col"><button class="btn" onclick="recalcCommission()">Calc</button></div>
+          </div>
+
+          <div style="margin-top:12px">
+            <div class="muted">Total commission:</div>
+            <div id="commission-result" style="font-size:20px;font-weight:700">0.00</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- BANK (alternate direct) -->
+    <section id="bank" class="panel" style="display:none">
+      <h2>Bank Accounts</h2>
+      <p class="small">Manage saved withdraw accounts (same as in Mine).</p>
+      <div style="margin-top:8px">
+        <table id="bank-table-2">
+          <thead><tr><th>Bank</th><th>Account</th><th>Code</th><th></th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- USERS -->
+    <section id="users" class="panel" style="display:none">
+      <h2>Users Manager</h2>
+      <p class="small">Create test users, toggle active/disabled state.</p>
+
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <input id="new-username" placeholder="username" />
+        <button class="btn" onclick="createUser()">Add User</button>
+      </div>
+
+      <div style="display:flex;gap:12px;margin-top:12px">
+        <div style="flex:1" class="panel">
+          <h3>Active Users</h3>
+          <table id="users-active"><thead><tr><th>Username</th><th></th></tr></thead><tbody></tbody></table>
+        </div>
+        <div style="flex:1" class="panel">
+          <h3>Disabled Users</h3>
+          <table id="users-disabled"><thead><tr><th>Username</th><th></th></tr></thead><tbody></tbody></table>
+        </div>
+      </div>
+    </section>
+
+    <!-- HELP -->
+    <section id="help" class="panel" style="display:none">
+      <h2>Help & FAQ</h2>
+      <div style="margin-top:8px">
+        <div class="panel" style="cursor:pointer" onclick="toggleFaq(this)">How to withdraw?<div class="muted small">Click to expand</div></div>
+        <div class="panel" style="margin-top:6px">Go to Mine → Add Bank → Save a bank. Open Withdraw form and choose saved bank then request withdraw.</div>
+
+        <div class="panel" style="cursor:pointer;margin-top:8px" onclick="toggleFaq(this)">How to earn referrals?<div class="muted small">Click to expand</div></div>
+        <div class="panel" style="margin-top:6px">Share your referral code. When referees join and complete tasks you earn commission.</div>
+      </div>
+
+      <div style="margin-top:12px">
+        <h3>Contact Customer Care</h3>
+        <form onsubmit="sendCare(event)">
+          <input id="care-name" placeholder="Name" required />
+          <input id="care-email" placeholder="Email" required />
+          <textarea id="care-msg" placeholder="Message" required></textarea>
+          <div style="display:flex;gap:8px"><button class="btn">Send</button><button type="button" class="btn ghost" onclick="document.getElementById('care-msg').value=''">Clear</button></div>
+          <p id="care-res" class="small muted"></p>
+        </form>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- floating chat badge -->
+<div class="chat-badge" title="Customer Care" onclick="showPanel('help')">
+  💬
+  <div class="badge-dot">1</div>
+</div>
+
+<!-- mobile bottom nav -->
+<nav class="bottom-nav" aria-hidden="false">
+  <button class="active" onclick="showPanel('home')">🏠</button>
+  <button onclick="showPanel('mine')">👤</button>
+  <button onclick="showPanel('bank')">🏦</button>
+  <button onclick="showPanel('users')">👥</button>
+</nav>
+
+<script>
+  // Simple in-memory state
+  const state = {
+    balance: 1000.00,
+    salary: 0.00,
+    commission: 0.00,
+    users: [],
+    banks: [], // {bank,acc,code}
+    withdraws: [], // {amount,account,status}
+    rates: {self:0, lv1:0, lv2:0, sal:0}
+  };
+
+  // Utilities
+  function $(id){return document.getElementById(id)}
+  function format(n){ return Number(n).toFixed(2) }
+
+  // Navigation
+  function showPanel(id){
+    // panels
+    ['home','mine','commission','bank','users','help'].forEach(p=>{
+      const el = document.getElementById(p);
+      if(!el) return;
+      el.style.display = (p===id) ? '' : 'none';
     });
+    // sidebar active
+    document.querySelectorAll('.nav-item').forEach(it=>{
+      it.classList.toggle('active', it.dataset.page === id);
+    });
+    // mobile bottom nav style
+    document.querySelectorAll('.bottom-nav button').forEach((b,i)=>{
+      b.classList.toggle('active', ['home','mine','bank','users'][i]===id);
+    });
+    refreshUI();
+  }
 
-    document.getElementById("generateBtn").addEventListener("click", () => {
-      const lib = document.getElementById("library").value;
-      const offsets = document.getElementById("offset").value.split(",");
-      const hexPatch = document.getElementById("hexpatch").value.trim();
+  // Profile
+  function updateProfile(e){
+    e.preventDefault();
+    const name = $('p-name').value || 'User';
+    const email = $('p-email').value || 'user@example.com';
+    $('profile-email').innerText = email;
+    $('profile-msg').innerText = 'Profile saved ✔️';
+    setTimeout(()=>$('profile-msg').innerText='',2000)
+  }
+  function resetProfile(){
+    $('p-name').value='Demo User';
+    $('p-email').value='user@example.com';
+    $('p-pass').value='';$('p-phone').value='';
+    $('profile-msg').innerText='Reset done';
+    setTimeout(()=>$('profile-msg').innerText='',1600)
+  }
 
-      if (!offsets[0]) {
-        document.getElementById("output").innerText = "// Please enter at least one offset!";
-        return;
+  // Banks
+  function addBank(e){
+    e.preventDefault();
+    const bank = $('bank-select').value.trim();
+    const acc = $('bank-acc').value.trim();
+    const code = $('bank-code').value.trim();
+    if(!bank||!acc) return alert('Choose bank and enter account number');
+    state.banks.push({bank,acc,code});
+    $('bank-select').value=''; $('bank-acc').value=''; $('bank-code').value='';
+    renderBanks();
+    updateWithdrawDropdown();
+  }
+  function renderBanks(){
+    const tbody = document.querySelector('#bank-table tbody');
+    const tbody2 = document.querySelector('#bank-table-2 tbody');
+    tbody.innerHTML=''; tbody2.innerHTML='';
+    state.banks.forEach((b,idx)=>{
+      const tr = document.createElement('tr');
+      tr.innerHTML=`<td>${b.bank}</td><td>${b.acc}</td><td>${b.code||''}</td>
+        <td><button class="small-btn" onclick="removeBank(${idx})">Remove</button></td>`;
+      tbody.appendChild(tr);
+      const tr2 = tr.cloneNode(true);
+      tbody2.appendChild(tr2);
+    });
+  }
+  function removeBank(i){
+    if(!confirm('Remove this bank?')) return;
+    state.banks.splice(i,1);
+    renderBanks();
+    updateWithdrawDropdown();
+  }
+  function populateSampleBanks(){
+    const samples = [
+      {bank:'Bank of America',acc:'1234567890',code:'BOA001'},
+      {bank:'Chase Bank',acc:'9876543210',code:'CHS002'},
+      {bank:'Wells Fargo',acc:'5554443332',code:'WEL003'}
+    ];
+    state.banks.push(...samples);
+    renderBanks(); updateWithdrawDropdown();
+  }
+
+  // Withdraw
+  function updateWithdrawDropdown(){
+    const sel = $('withdraw-select');
+    sel.innerHTML = '<option value="">Select saved account</option>';
+    state.banks.forEach(b=>{
+      const opt = document.createElement('option');
+      opt.value = b.bank + ' | ' + b.acc;
+      opt.text = `${b.bank} (${b.acc})`;
+      sel.appendChild(opt);
+    });
+  }
+  function requestWithdraw(e){
+    e.preventDefault();
+    const amount = parseFloat($('withdraw-amount').value);
+    const account = $('withdraw-select').value;
+    if(!amount || !account) return alert('Fill amount and select account');
+    if(amount > state.balance) return alert('Insufficient balance');
+    state.balance -= amount;
+    state.withdraws.push({amount,account,status:'Pending'});
+    $('withdraw-amount').value=''; $('withdraw-select').value='';
+    renderWithdraws();
+    refreshUI();
+  }
+  function renderWithdraws(){
+    const tbody = document.querySelector('#withdraw-table tbody');
+    tbody.innerHTML='';
+    state.withdraws.forEach((w,idx)=>{
+      const tr = document.createElement('tr');
+      tr.innerHTML=`<td>${format(w.amount)}</td><td>${w.account}</td><td>${w.status}</td>
+        <td><button class="small-btn" onclick="cancelWithdraw(${idx})">Cancel</button></td>`;
+      tbody.appendChild(tr);
+    });
+  }
+  function cancelWithdraw(i){
+    if(!confirm('Cancel this withdrawal?')) return;
+    const w = state.withdraws.splice(i,1)[0];
+    state.balance += w.amount;
+    renderWithdraws(); refreshUI();
+  }
+  function clearWithdrawHistory(){
+    if(confirm('Clear all withdraw history?')){
+      state.withdraws = []; renderWithdraws();
+    }
+  }
+
+  // Users
+  function createUser(){
+    const name = $('new-username').value.trim();
+    if(!name) return alert('Enter username');
+    state.users.push({name,active:true});
+    $('new-username').value='';
+    renderUsers();
+  }
+  function renderUsers(){
+    const a = document.querySelector('#users-active tbody');
+    const d = document.querySelector('#users-disabled tbody');
+    a.innerHTML=''; d.innerHTML='';
+    state.users.forEach((u,idx)=>{
+      const tr=document.createElement('tr');
+      if(u.active){
+        tr.innerHTML=`<td>${u.name}</td><td><button class="small-btn" onclick="disableUser(${idx})">Disable</button></td>`;
+        a.appendChild(tr);
+      } else {
+        tr.innerHTML=`<td>${u.name}</td><td><button class="small-btn" onclick="enableUser(${idx})">Enable</button> <button class="small-btn danger" onclick="deleteUser(${idx})">Delete</button></td>`;
+        d.appendChild(tr);
       }
-
-      // Generate PatchLib lines
-      let patchLibLines = offsets.map(off =>
-        `PATCH_LIB("${lib}", "0x${off.trim()}", "${hexPatch}");`
-      ).join("\n");
-
-      // Generate MemoryPatch structure
-      let memPatch = "MemoryPatch patches[] = {\n" + offsets.map(off =>
-        `    MemoryPatch::createWithHex("${lib}", 0x${off.trim()}, "${hexPatch}")`
-      ).join(",\n") + "\n};";
-
-      document.getElementById("output").innerText =
-        patchLibLines + "\n\n// === MemoryPatch Structure ===\n" + memPatch;
     });
-  </script>
+    $('ui-users-count').innerText = state.users.length;
+  }
+  function disableUser(i){ state.users[i].active=false; renderUsers(); }
+  function enableUser(i){ state.users[i].active=true; renderUsers(); }
+  function deleteUser(i){ if(confirm('Delete user?')){ state.users.splice(i,1); renderUsers(); } }
+
+  // Commission calc
+  function recalcCommission(){
+    const selfAmt = parseFloat($('tx-self').value||0);
+    const lv1Amt = parseFloat($('tx-lv1').value||0);
+    const lv2Amt = parseFloat($('tx-lv2').value||0);
+    state.rates.self = parseFloat($('rate-self').value||0);
+    state.rates.lv1 = parseFloat($('rate-lv1').value||0);
+    state.rates.lv2 = parseFloat($('rate-lv2').value||0);
+    const c = (selfAmt*state.rates.self/100) + (lv1Amt*state.rates.lv1/100) + (lv2Amt*state.rates.lv2/100);
+    $('commission-result').innerText = format(c);
+    state.commission = c;
+    refreshUI();
+  }
+  function resetRates(){ $('rate-self').value='0'; $('rate-lv1').value='0'; $('rate-lv2').value='0'; $('rate-sal').value='0'; recalcCommission(); }
+
+  // Referral
+  function copyReferral(){
+    const code='GAME123';
+    if(navigator.clipboard) navigator.clipboard.writeText(code).then(()=>alert('Referral copied: '+code));
+    else alert('Referral: '+code);
+  }
+  function shareReferral(){
+    const text = 'Join with my code GAME123 and earn!';
+    if(navigator.share){
+      navigator.share({title:'Join OKBank',text,url:location.href}).catch(()=>{alert('Share failed')});
+    } else {
+      copyReferral();
+    }
+  }
+
+  // Care
+  function sendCare(e){
+    e.preventDefault();
+    const name = $('care-name').value, email = $('care-email').value, msg = $('care-msg').value;
+    $('care-res').innerText = 'Sending...';
+    setTimeout(()=>{$('care-res').innerText = 'Message sent — we will reply soon.'; $('care-msg').value='';},900);
+  }
+
+  function toggleFaq(el){
+    const next = el.nextElementSibling;
+    if(!next) return;
+    next.style.display = next.style.display==='block'?'none':'block';
+  }
+
+  // Misc
+  function cancelAll(){ state.banks=[]; state.withdraws=[]; state.users=[]; renderBanks(); renderWithdraws(); renderUsers(); updateWithdrawDropdown(); refreshUI(); }
+
+  // render helpers
+  function renderBanks(){ renderBanks = null; /* guarded below */ }
+  // actual implementations as functions above will manage rendering via renderBanks() removed above
+  // but to ensure existed call below; implement now:
+  (function defineRenderBanks(){
+    window.renderBanks = function(){ /* keep in sync with add/remove */ 
+      const tbody = document.querySelector('#bank-table tbody');
+      tbody.innerHTML='';
+      state.banks.forEach((b,idx)=>{
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${b.bank}</td><td>${b.acc}</td><td>${b.code||''}</td>
+          <td><button class="small-btn" onclick="removeBank(${idx})">Remove</button></td>`;
+        tbody.appendChild(tr);
+      });
+      // also fill second table
+      const tbody2 = document.querySelector('#bank-table-2 tbody');
+      if(tbody2){
+        tbody2.innerHTML='';
+        state.banks.forEach((b,idx)=>{
+          const tr = document.createElement('tr');
+          tr.innerHTML = `<td>${b.bank}</td><td>${b.acc}</td><td>${b.code||''}</td>
+            <td><button class="small-btn" onclick="removeBank(${idx})">Remove</button></td>`;
+          tbody2.appendChild(tr);
+        });
+      }
+    }
+  })();
+
+  function refreshUI(){
+    // update balances / header
+    $('ui-balance').innerText = format(state.balance);
+    $('ui-salary').innerText = format(state.salary);
+    $('ui-commission').innerText = format(state.commission);
+    $('ui-users-count').innerText = state.users.length;
+    // mine page duplicates
+    $('mine-balance').innerText = format(state.balance);
+    $('mine-salary').innerText = format(state.salary);
+    $('mine-commission').innerText = format(state.commission);
+    renderBanks();
+    renderWithdraws();
+    updateWithdrawDropdown();
+    renderUsers();
+  }
+
+  // initial seed
+  (function init(){
+    state.users = [{name:'Alice',active:true},{name:'Bob',active:true},{name:'Charlie',active:false}];
+    state.banks = [{bank:'Chase Bank',acc:'9876543210',code:'CHS002'}];
+    renderBanks(); updateWithdrawDropdown(); renderUsers(); renderWithdraws(); refreshUI();
+  })();
+
+  // Profile form input id fix: map p-name id reference to element (since updateProfile uses $('p-name') etc)
+  document.addEventListener('DOMContentLoaded',()=>{
+    // pre-fill profile inputs
+    if(!$('p-name')){ // create aliases to form inputs used earlier
+      // we used ids directly in markup: p-name, p-email exist; nothing to do
+    }
+  });
+</script>
 </body>
 </html>
